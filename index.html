@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Owner — Wealth Optimization Score</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- WELCOME SCREEN -->
+    <div id="screen-welcome" class="screen active">
+      <div class="container welcome-container">
+        <div class="welcome-badge">Wealth Optimization Assessment</div>
+        <h1>How Optimized Is Your Wealth-Building System?</h1>
+        <p class="subtitle">Business owners often make good money without fully converting it into lasting wealth. This 5-minute assessment shows how well your current setup is working.</p>
+        <ul class="welcome-bullets">
+          <li>Get a score out of 100</li>
+          <li>See where wealth is leaking</li>
+          <li>Find your top priorities</li>
+        </ul>
+        <button class="btn-primary" onclick="startAssessment()">Start Assessment</button>
+        <p class="note">No detailed financial documents needed.</p>
+      </div>
+    </div>
+
+    <!-- PROFILE SCREEN -->
+    <div id="screen-profile" class="screen">
+      <div class="container">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="screen-header">
+          <span class="section-label">About You</span>
+          <h2>A few quick questions to personalize your score</h2>
+        </div>
+        <div id="profile-questions"></div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goBack()">Back</button>
+          <button class="btn-primary" id="profile-next-btn" onclick="submitProfile()" disabled>Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION SCREENS (generated dynamically) -->
+    <div id="screen-section" class="screen">
+      <div class="container">
+        <div class="progress-bar"><div class="progress-fill" id="section-progress-fill"></div></div>
+        <div class="screen-header">
+          <span class="section-label" id="section-label"></span>
+          <h2 id="section-title"></h2>
+        </div>
+        <div id="section-questions"></div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goBack()">Back</button>
+          <button class="btn-primary" id="section-next-btn" onclick="nextSection()" disabled>Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="screen-results" class="screen">
+      <div class="container results-container">
+        <div class="results-header">
+          <div class="score-ring" id="score-ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="score-bg" cx="60" cy="60" r="52" />
+              <circle class="score-arc" id="score-arc" cx="60" cy="60" r="52" />
+            </svg>
+            <div class="score-number" id="score-number">0</div>
+          </div>
+          <div class="score-label" id="score-label"></div>
+          <p class="score-summary" id="score-summary"></p>
+        </div>
+
+        <div class="results-section">
+          <h3>Your Strengths</h3>
+          <div id="strengths-list" class="insight-list"></div>
+        </div>
+
+        <div class="results-section">
+          <h3>Wealth Leaks</h3>
+          <div id="leaks-list" class="insight-list"></div>
+        </div>
+
+        <div class="results-section">
+          <h3>Top Priorities</h3>
+          <div id="priorities-list" class="priorities-list"></div>
+        </div>
+
+        <div class="results-section">
+          <h3>Section Breakdown</h3>
+          <div id="breakdown-list" class="breakdown-list"></div>
+        </div>
+
+        <div class="cta-box">
+          <h3>Want the Full Wealth Optimization Review?</h3>
+          <p>Get a personalized review of your score, biggest blind spots, and the highest-impact next moves for your situation.</p>
+          <button class="btn-primary" onclick="alert('This would link to your scheduling page.')">Schedule a Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

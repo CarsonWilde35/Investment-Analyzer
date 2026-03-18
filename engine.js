@@ -175,12 +175,22 @@ function calculateResults(profile, answers) {
 
   // Sort sections by pct for strengths/leaks
   const sorted = [...sectionResults].sort((a, b) => b.pct - a.pct);
-  const strengths = sorted.slice(0, 2);
-  const leaks = sorted.slice(-3).reverse();
 
-  // Top 3 recommendation categories from weakest sections
-  const weakest = sorted.slice(-3).reverse().map(s => s.key);
-  const topRecs = weakest.slice(0, 3).map(key => RECOMMENDATIONS[key]);
+  // Strengths: top sections that actually score well (above 60%)
+  const strengthCandidates = sorted.filter(s => s.pct >= 60);
+  const strengths = strengthCandidates.slice(0, 2);
+
+  // Leaks: bottom sections that actually score poorly (below 70%)
+  const leakCandidates = [...sorted].reverse().filter(s => s.pct < 70);
+  const leaks = leakCandidates.slice(0, 3);
+
+  // Recommendations: from weakest sections, but only those below 80%
+  const recCandidates = [...sorted].reverse().filter(s => s.pct < 80);
+  const topRecs = recCandidates.slice(0, 3).map(s => RECOMMENDATIONS[s.key]);
+
+  // Deduplicate: remove any section that appears in both strengths and leaks
+  const strengthKeys = new Set(strengths.map(s => s.key));
+  const dedupedLeaks = leaks.filter(s => !strengthKeys.has(s.key));
 
   return {
     score: finalScore,
@@ -189,7 +199,7 @@ function calculateResults(profile, answers) {
     penalties: penalties,
     sections: sectionResults,
     strengths: strengths.map(s => STRENGTH_DESCRIPTIONS[s.key]),
-    leaks: leaks.map(s => LEAK_DESCRIPTIONS[s.key]),
+    leaks: dedupedLeaks.map(s => LEAK_DESCRIPTIONS[s.key]),
     recommendations: topRecs
   };
 }

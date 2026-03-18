@@ -197,6 +197,7 @@ h1 {
   line-height: 1.4;
 }
 .option-item:hover { border-color: var(--color-accent); background: var(--color-accent-light); }
+.option-item:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .option-item.selected {
   border-color: var(--color-accent);
   background: var(--color-accent-light);

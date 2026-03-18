@@ -24,7 +24,7 @@ function updateProgress(step) {
 function startAssessment() {
   renderProfileQuestions();
   showScreen('screen-profile');
-  updateProgress(0);
+  updateProgress(0.5);
 }
 
 // --- Profile ---
@@ -41,8 +41,13 @@ function renderProfileQuestions() {
       item.className = 'option-item';
       item.setAttribute('data-qid', pq.id);
       item.setAttribute('data-value', opt.value);
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('role', 'radio');
       item.innerHTML = `<div class="option-radio"></div><span>${opt.text}</span>`;
       item.addEventListener('click', () => selectProfileOption(pq.id, opt.value, item));
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectProfileOption(pq.id, opt.value, item); }
+      });
       list.appendChild(item);
     });
     container.appendChild(block);
@@ -89,8 +94,13 @@ function renderSection(index) {
       const item = document.createElement('div');
       item.className = 'option-item';
       if (answers[q.id] === opt.score) item.classList.add('selected');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('role', 'radio');
       item.innerHTML = `<div class="option-radio"></div><span>${opt.text}</span>`;
       item.addEventListener('click', () => selectScoredOption(q.id, opt.score, item));
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectScoredOption(q.id, opt.score, item); }
+      });
       list.appendChild(item);
     });
     container.appendChild(block);
@@ -151,10 +161,16 @@ function showResults() {
   const results = calculateResults(profile, answers);
   showScreen('screen-results');
 
-  // Animate score ring
+  // Animate score ring with band-appropriate color
   const circumference = 2 * Math.PI * 52; // ~326.73
   const arc = document.getElementById('score-arc');
   const offset = circumference - (results.score / 100) * circumference;
+  let ringColor = '#c0392b'; // Fragile
+  if (results.score >= 90) ringColor = '#1b4d3e';
+  else if (results.score >= 80) ringColor = '#27ae60';
+  else if (results.score >= 65) ringColor = '#2ecc71';
+  else if (results.score >= 50) ringColor = '#e67e22';
+  arc.style.stroke = ringColor;
   requestAnimationFrame(() => {
     arc.style.strokeDashoffset = offset;
   });
@@ -168,22 +184,34 @@ function showResults() {
 
   // Strengths
   const strengthsEl = document.getElementById('strengths-list');
-  strengthsEl.innerHTML = results.strengths.map(s =>
-    `<div class="insight-item"><div class="insight-dot strength"></div><span>${s}</span></div>`
-  ).join('');
+  if (results.strengths.length === 0) {
+    strengthsEl.innerHTML = '<p style="color:#5a5a5a;font-size:0.93rem;">No standout strengths identified yet. Focus on the priorities below to build momentum.</p>';
+  } else {
+    strengthsEl.innerHTML = results.strengths.map(s =>
+      `<div class="insight-item"><div class="insight-dot strength"></div><span>${s}</span></div>`
+    ).join('');
+  }
 
   // Leaks
   const leaksEl = document.getElementById('leaks-list');
-  leaksEl.innerHTML = results.leaks.map(l =>
-    `<div class="insight-item"><div class="insight-dot leak"></div><span>${l}</span></div>`
-  ).join('');
+  if (results.leaks.length === 0) {
+    leaksEl.innerHTML = '<p style="color:#5a5a5a;font-size:0.93rem;">No major wealth leaks detected. Your system is working well across the board.</p>';
+  } else {
+    leaksEl.innerHTML = results.leaks.map(l =>
+      `<div class="insight-item"><div class="insight-dot leak"></div><span>${l}</span></div>`
+    ).join('');
+  }
 
   // Priorities
   const priEl = document.getElementById('priorities-list');
-  priEl.innerHTML = results.recommendations.map((rec, i) => {
-    const actionList = rec.actions.map(a => `<li>${a}</li>`).join('');
-    return `<div class="priority-item"><span class="priority-num">${i + 1}</span><strong>${rec.label}</strong><ul style="margin:8px 0 0 36px;font-size:0.9rem;line-height:1.6;color:#5a5a5a;">${actionList}</ul></div>`;
-  }).join('');
+  if (results.recommendations.length === 0) {
+    priEl.innerHTML = '<p style="color:#5a5a5a;font-size:0.93rem;">You are performing well across all areas. Consider a comprehensive review to fine-tune your strategy.</p>';
+  } else {
+    priEl.innerHTML = results.recommendations.map((rec, i) => {
+      const actionList = rec.actions.map(a => `<li>${a}</li>`).join('');
+      return `<div class="priority-item"><span class="priority-num">${i + 1}</span><strong>${rec.label}</strong><ul style="margin:8px 0 0 36px;font-size:0.9rem;line-height:1.6;color:#5a5a5a;">${actionList}</ul></div>`;
+    }).join('');
+  }
 
   // Section breakdown bars
   const breakdownEl = document.getElementById('breakdown-list');
@@ -199,6 +227,16 @@ function showResults() {
       <div class="bar-track"><div class="bar-fill ${colorClass}" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
+}
+
+function restartAssessment() {
+  profile = {};
+  answers = {};
+  currentSectionIndex = 0;
+  // Reset score ring
+  document.getElementById('score-arc').style.strokeDashoffset = 326.73;
+  document.getElementById('score-number').textContent = '0';
+  showScreen('screen-welcome');
 }
 
 function animateNumber(el, target) {

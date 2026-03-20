@@ -8,170 +8,199 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
+  <div id="app">
 
-  <!-- ============ EDITOR PANEL ============ -->
-  <div id="editor-panel" class="editor-panel">
-    <div class="editor-header">
-      <h1>Proposal Generator</h1>
-      <p>Fill in the details below to generate a personalized financial planning proposal.</p>
+    <!-- WELCOME SCREEN -->
+    <div id="screen-welcome" class="screen active">
+      <div class="container welcome-container">
+        <div class="welcome-badge">Proposal Generator</div>
+        <h1>Build a Financial Planning Proposal</h1>
+        <p class="subtitle">Create a personalized, professional financial planning proposal for your clients — customized for individuals or couples, and ready to save as a PDF.</p>
+        <ul class="welcome-bullets">
+          <li>Step-by-step guided setup</li>
+          <li>Customize categories, pricing, and disclosures</li>
+          <li>Export a polished, client-ready PDF</li>
+        </ul>
+        <button class="btn-primary" onclick="startWizard()">Build a Proposal</button>
+        <p class="note">Takes about 3 minutes to complete.</p>
+      </div>
     </div>
 
-    <form id="proposal-form" onsubmit="return false;">
-      <!-- Client Info -->
-      <fieldset>
-        <legend>Client Information</legend>
-        <div class="form-row">
-          <label>Client Type
-            <select id="clientType" onchange="toggleClientType()">
-              <option value="individual">Individual</option>
-              <option value="couple">Couple</option>
-            </select>
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Client 1 — Full Name
-            <input type="text" id="client1Name" placeholder="e.g. John Smith" required>
-          </label>
-        </div>
-        <div class="form-row couple-field" style="display:none;">
-          <label>Client 2 — Full Name
-            <input type="text" id="client2Name" placeholder="e.g. Jane Smith">
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- Advisor Info -->
-      <fieldset>
-        <legend>Advisor / Firm Information</legend>
-        <div class="form-row">
-          <label>Advisor Name
-            <input type="text" id="advisorName" placeholder="e.g. Carson Wilde" required>
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Firm Name
-            <input type="text" id="firmName" placeholder="e.g. Wilde Wealth Advisors" required>
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Advisor Title
-            <input type="text" id="advisorTitle" placeholder="e.g. Certified Financial Planner™">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Phone
-            <input type="text" id="advisorPhone" placeholder="e.g. (555) 123-4567">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Email
-            <input type="email" id="advisorEmail" placeholder="e.g. carson@wildewealth.com">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Website
-            <input type="text" id="advisorWebsite" placeholder="e.g. www.wildewealth.com">
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- Proposal Date -->
-      <fieldset>
-        <legend>Proposal Details</legend>
-        <div class="form-row">
-          <label>Proposal Date
-            <input type="date" id="proposalDate">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Proposed Start Date (Week 1 begins)
-            <input type="date" id="startDate">
-          </label>
-        </div>
-      </fieldset>
-
-      <!-- Planning Focus Areas — allow toggling -->
-      <fieldset>
-        <legend>Planning Categories</legend>
-        <p class="field-note">Select which categories to include. Customize descriptions as needed.</p>
-
-        <div class="category-toggle">
-          <label class="toggle-label">
-            <input type="checkbox" checked data-cat="cashflow"> Cash Flow
-          </label>
-          <textarea data-cat-desc="cashflow" rows="2">Analyze income sources, expenses, and savings rate to build a sustainable cash flow system that aligns with your goals.</textarea>
+    <!-- STEP: CLIENT INFO -->
+    <div id="screen-client" class="screen">
+      <div class="container">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="screen-header">
+          <span class="section-label">Step 1 of 5</span>
+          <h2>Who is this proposal for?</h2>
         </div>
 
-        <div class="category-toggle">
-          <label class="toggle-label">
-            <input type="checkbox" checked data-cat="tax"> Tax Strategy
-          </label>
-          <textarea data-cat-desc="tax" rows="2">Develop proactive tax strategies to minimize your lifetime tax burden through entity optimization, timing, and tax-advantaged vehicles.</textarea>
+        <div class="question-block">
+          <div class="q-label">Client Type</div>
+          <div class="option-list" id="client-type-options">
+            <div class="option-item" tabindex="0" role="radio" data-value="individual" onclick="selectOption('clientType','individual',this)">
+              <div class="option-radio"></div><span>Individual</span>
+            </div>
+            <div class="option-item" tabindex="0" role="radio" data-value="couple" onclick="selectOption('clientType','couple',this)">
+              <div class="option-radio"></div><span>Couple</span>
+            </div>
+          </div>
         </div>
 
-        <div class="category-toggle">
-          <label class="toggle-label">
-            <input type="checkbox" checked data-cat="investment"> Investment Strategy
-          </label>
-          <textarea data-cat-desc="investment" rows="2">Design a diversified, goal-aligned investment portfolio with clear asset allocation, risk management, and rebalancing discipline.</textarea>
+        <div class="question-block">
+          <div class="q-label">Client 1 — Full Name</div>
+          <input type="text" class="text-input" id="client1Name" placeholder="e.g. John Smith" oninput="checkStepComplete('client')">
         </div>
 
-        <div class="category-toggle">
-          <label class="toggle-label">
-            <input type="checkbox" checked data-cat="retirement"> Retirement Planning
-          </label>
-          <textarea data-cat-desc="retirement" rows="2">Project retirement readiness, optimize contribution strategies, and model income distribution plans for a confident retirement.</textarea>
+        <div class="question-block" id="client2-block" style="display:none;">
+          <div class="q-label">Client 2 — Full Name</div>
+          <input type="text" class="text-input" id="client2Name" placeholder="e.g. Jane Smith" oninput="checkStepComplete('client')">
         </div>
 
-        <div class="category-toggle">
-          <label class="toggle-label">
-            <input type="checkbox" checked data-cat="risk"> Risk Management
-          </label>
-          <textarea data-cat-desc="risk" rows="2">Evaluate insurance coverage, liability exposure, and contingency planning to protect your family and assets from the unexpected.</textarea>
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goBack()">Back</button>
+          <button class="btn-primary" id="client-next" onclick="goNext()" disabled>Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP: ADVISOR / FIRM INFO -->
+    <div id="screen-advisor" class="screen">
+      <div class="container">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill-2"></div></div>
+        <div class="screen-header">
+          <span class="section-label">Step 2 of 5</span>
+          <h2>Your information</h2>
         </div>
 
-        <div class="category-toggle">
-          <label class="toggle-label">
-            <input type="checkbox" checked data-cat="estate"> Estate Planning
-          </label>
-          <textarea data-cat-desc="estate" rows="2">Review wills, trusts, beneficiary designations, and wealth transfer strategies to ensure your legacy is protected and intentional.</textarea>
+        <div class="question-block">
+          <div class="q-label">Advisor Name</div>
+          <input type="text" class="text-input" id="advisorName" placeholder="e.g. Carson Wilde" oninput="checkStepComplete('advisor')">
         </div>
-      </fieldset>
 
-      <!-- Pricing -->
-      <fieldset>
-        <legend>Pricing</legend>
-        <div class="form-row">
-          <label>Financial Plan Fee
-            <input type="text" id="planFee" placeholder="e.g. $3,500">
-          </label>
+        <div class="question-block">
+          <div class="q-label">Firm Name</div>
+          <input type="text" class="text-input" id="firmName" placeholder="e.g. Wilde Wealth Advisors" oninput="checkStepComplete('advisor')">
         </div>
-        <div class="form-row">
-          <label>What's Included (one item per line)
-            <textarea id="pricingIncludes" rows="6">Comprehensive financial plan across all selected categories
+
+        <div class="question-block">
+          <div class="q-label">Advisor Title <span class="optional-tag">Optional</span></div>
+          <input type="text" class="text-input" id="advisorTitle" placeholder="e.g. Certified Financial Planner™">
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Phone <span class="optional-tag">Optional</span></div>
+          <input type="text" class="text-input" id="advisorPhone" placeholder="e.g. (555) 123-4567">
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Email <span class="optional-tag">Optional</span></div>
+          <input type="email" class="text-input" id="advisorEmail" placeholder="e.g. carson@wildewealth.com">
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Website <span class="optional-tag">Optional</span></div>
+          <input type="text" class="text-input" id="advisorWebsite" placeholder="e.g. www.wildewealth.com">
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goBack()">Back</button>
+          <button class="btn-primary" id="advisor-next" onclick="goNext()" disabled>Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP: PLANNING CATEGORIES -->
+    <div id="screen-categories" class="screen">
+      <div class="container">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill-3"></div></div>
+        <div class="screen-header">
+          <span class="section-label">Step 3 of 5</span>
+          <h2>Select the planning categories to include</h2>
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Proposal Date</div>
+          <input type="date" class="text-input" id="proposalDate">
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Engagement Start Date (Week 1 begins)</div>
+          <input type="date" class="text-input" id="startDate">
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Which categories should be in this proposal?</div>
+          <p class="q-hint">Select all that apply. You can customize descriptions on the next step.</p>
+          <div class="checkbox-list" id="category-checkboxes">
+            <!-- generated by JS -->
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goBack()">Back</button>
+          <button class="btn-primary" id="categories-next" onclick="goNext()" disabled>Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP: PRICING & CUSTOMIZE -->
+    <div id="screen-pricing" class="screen">
+      <div class="container">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill-4"></div></div>
+        <div class="screen-header">
+          <span class="section-label">Step 4 of 5</span>
+          <h2>Pricing and category descriptions</h2>
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Financial Plan Fee</div>
+          <input type="text" class="text-input" id="planFee" placeholder="e.g. $3,500" oninput="checkStepComplete('pricing')">
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">What's Included <span class="optional-tag">One item per line</span></div>
+          <textarea class="text-area" id="pricingIncludes" rows="5">Comprehensive financial plan across all selected categories
 Detailed written analysis and recommendations
 Two in-person or virtual review meetings
 Implementation roadmap with action items
 30-day follow-up support after plan delivery</textarea>
-          </label>
         </div>
-        <div class="form-row">
-          <label>Ongoing Advisory Fee (optional)
-            <input type="text" id="ongoingFee" placeholder="e.g. 1% of AUM or $250/month">
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Ongoing Advisory Description (optional)
-            <textarea id="ongoingDesc" rows="3" placeholder="e.g. Continuous portfolio management, quarterly reviews, tax-loss harvesting, and unlimited advisor access."></textarea>
-          </label>
-        </div>
-      </fieldset>
 
-      <!-- Disclosures -->
-      <fieldset>
-        <legend>Firm Disclosures</legend>
-        <p class="field-note">Edit this text as needed. It will appear on the final page.</p>
-        <textarea id="disclosures" rows="12">This proposal is provided for informational purposes only and does not constitute investment advice, a solicitation, or an offer to buy or sell any securities. All recommendations are subject to change without notice.
+        <div class="question-block">
+          <div class="q-label">Ongoing Advisory Fee <span class="optional-tag">Optional</span></div>
+          <input type="text" class="text-input" id="ongoingFee" placeholder="e.g. 1% of AUM or $250/month">
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Ongoing Advisory Description <span class="optional-tag">Optional</span></div>
+          <textarea class="text-area" id="ongoingDesc" rows="2" placeholder="e.g. Continuous portfolio management, quarterly reviews, and unlimited advisor access."></textarea>
+        </div>
+
+        <div id="category-description-blocks">
+          <!-- generated by JS based on selected categories -->
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goBack()">Back</button>
+          <button class="btn-primary" id="pricing-next" onclick="goNext()" disabled>Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP: DISCLOSURES -->
+    <div id="screen-disclosures" class="screen">
+      <div class="container">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill-5"></div></div>
+        <div class="screen-header">
+          <span class="section-label">Step 5 of 5</span>
+          <h2>Firm disclosures</h2>
+        </div>
+
+        <div class="question-block">
+          <div class="q-label">Edit the disclosures that will appear on the final page</div>
+          <p class="q-hint">Use [Firm Name] as a placeholder — it will be auto-replaced with your firm name.</p>
+          <textarea class="text-area" id="disclosures" rows="14">This proposal is provided for informational purposes only and does not constitute investment advice, a solicitation, or an offer to buy or sell any securities. All recommendations are subject to change without notice.
 
 Past performance is not indicative of future results. Investing involves risk, including the potential loss of principal. There is no guarantee that any financial plan or investment strategy will be successful.
 
@@ -180,24 +209,41 @@ Past performance is not indicative of future results. Investing involves risk, i
 The financial planning services described herein are offered as described in our Form ADV Part 2A. Fees are described in detail in this proposal and in our Form ADV Part 2A brochure.
 
 Insurance products and services are offered through appropriately licensed individuals. [Firm Name] does not provide legal or tax advice. Clients should consult with their own legal and tax professionals regarding their specific situation.</textarea>
-      </fieldset>
+        </div>
 
-      <div class="form-actions">
-        <button type="button" class="btn-generate" onclick="generateProposal()">Generate Proposal</button>
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="goBack()">Back</button>
+          <button class="btn-primary" onclick="generateProposal()">Generate Proposal</button>
+        </div>
       </div>
-    </form>
-  </div>
-
-  <!-- ============ PROPOSAL PREVIEW ============ -->
-  <div id="proposal-preview" class="proposal-preview" style="display:none;">
-    <div class="preview-toolbar">
-      <button onclick="downloadPDF()">Save as PDF</button>
-      <button onclick="backToEditor()">Back to Editor</button>
     </div>
 
-    <div id="proposal-content" class="proposal-content">
-      <!-- Pages are injected here by JS -->
+    <!-- RESULT: PROPOSAL PREVIEW -->
+    <div id="screen-preview" class="screen">
+      <div class="container results-container">
+        <div class="results-header">
+          <div class="welcome-badge">Your Proposal Is Ready</div>
+          <h2 id="preview-title"></h2>
+          <p class="score-summary" id="preview-subtitle"></p>
+        </div>
+
+        <div class="preview-actions">
+          <button class="btn-primary" onclick="downloadPDF()">Save as PDF</button>
+          <button class="btn-secondary" onclick="printProposal()">Print</button>
+          <button class="btn-secondary" onclick="backToEditor()">Edit Proposal</button>
+        </div>
+
+        <div id="proposal-content" class="proposal-pages">
+          <!-- proposal pages injected here -->
+        </div>
+
+        <div class="preview-actions" style="margin-top:32px;">
+          <button class="btn-primary" onclick="downloadPDF()">Save as PDF</button>
+          <button class="btn-secondary" onclick="startOver()">Start New Proposal</button>
+        </div>
+      </div>
     </div>
+
   </div>
 
   <script src="proposal-app.js"></script>

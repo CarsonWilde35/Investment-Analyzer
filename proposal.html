@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Planning Proposal Generator</title>
+  <link rel="stylesheet" href="proposal-styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- ============ EDITOR PANEL ============ -->
+  <div id="editor-panel" class="editor-panel">
+    <div class="editor-header">
+      <h1>Proposal Generator</h1>
+      <p>Fill in the details below to generate a personalized financial planning proposal.</p>
+    </div>
+
+    <form id="proposal-form" onsubmit="return false;">
+      <!-- Client Info -->
+      <fieldset>
+        <legend>Client Information</legend>
+        <div class="form-row">
+          <label>Client Type
+            <select id="clientType" onchange="toggleClientType()">
+              <option value="individual">Individual</option>
+              <option value="couple">Couple</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Client 1 — Full Name
+            <input type="text" id="client1Name" placeholder="e.g. John Smith" required>
+          </label>
+        </div>
+        <div class="form-row couple-field" style="display:none;">
+          <label>Client 2 — Full Name
+            <input type="text" id="client2Name" placeholder="e.g. Jane Smith">
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Advisor Info -->
+      <fieldset>
+        <legend>Advisor / Firm Information</legend>
+        <div class="form-row">
+          <label>Advisor Name
+            <input type="text" id="advisorName" placeholder="e.g. Carson Wilde" required>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Firm Name
+            <input type="text" id="firmName" placeholder="e.g. Wilde Wealth Advisors" required>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Advisor Title
+            <input type="text" id="advisorTitle" placeholder="e.g. Certified Financial Planner™">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Phone
+            <input type="text" id="advisorPhone" placeholder="e.g. (555) 123-4567">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Email
+            <input type="email" id="advisorEmail" placeholder="e.g. carson@wildewealth.com">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Website
+            <input type="text" id="advisorWebsite" placeholder="e.g. www.wildewealth.com">
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Proposal Date -->
+      <fieldset>
+        <legend>Proposal Details</legend>
+        <div class="form-row">
+          <label>Proposal Date
+            <input type="date" id="proposalDate">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Proposed Start Date (Week 1 begins)
+            <input type="date" id="startDate">
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Planning Focus Areas — allow toggling -->
+      <fieldset>
+        <legend>Planning Categories</legend>
+        <p class="field-note">Select which categories to include. Customize descriptions as needed.</p>
+
+        <div class="category-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" checked data-cat="cashflow"> Cash Flow
+          </label>
+          <textarea data-cat-desc="cashflow" rows="2">Analyze income sources, expenses, and savings rate to build a sustainable cash flow system that aligns with your goals.</textarea>
+        </div>
+
+        <div class="category-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" checked data-cat="tax"> Tax Strategy
+          </label>
+          <textarea data-cat-desc="tax" rows="2">Develop proactive tax strategies to minimize your lifetime tax burden through entity optimization, timing, and tax-advantaged vehicles.</textarea>
+        </div>
+
+        <div class="category-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" checked data-cat="investment"> Investment Strategy
+          </label>
+          <textarea data-cat-desc="investment" rows="2">Design a diversified, goal-aligned investment portfolio with clear asset allocation, risk management, and rebalancing discipline.</textarea>
+        </div>
+
+        <div class="category-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" checked data-cat="retirement"> Retirement Planning
+          </label>
+          <textarea data-cat-desc="retirement" rows="2">Project retirement readiness, optimize contribution strategies, and model income distribution plans for a confident retirement.</textarea>
+        </div>
+
+        <div class="category-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" checked data-cat="risk"> Risk Management
+          </label>
+          <textarea data-cat-desc="risk" rows="2">Evaluate insurance coverage, liability exposure, and contingency planning to protect your family and assets from the unexpected.</textarea>
+        </div>
+
+        <div class="category-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" checked data-cat="estate"> Estate Planning
+          </label>
+          <textarea data-cat-desc="estate" rows="2">Review wills, trusts, beneficiary designations, and wealth transfer strategies to ensure your legacy is protected and intentional.</textarea>
+        </div>
+      </fieldset>
+
+      <!-- Pricing -->
+      <fieldset>
+        <legend>Pricing</legend>
+        <div class="form-row">
+          <label>Financial Plan Fee
+            <input type="text" id="planFee" placeholder="e.g. $3,500">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>What's Included (one item per line)
+            <textarea id="pricingIncludes" rows="6">Comprehensive financial plan across all selected categories
+Detailed written analysis and recommendations
+Two in-person or virtual review meetings
+Implementation roadmap with action items
+30-day follow-up support after plan delivery</textarea>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Ongoing Advisory Fee (optional)
+            <input type="text" id="ongoingFee" placeholder="e.g. 1% of AUM or $250/month">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Ongoing Advisory Description (optional)
+            <textarea id="ongoingDesc" rows="3" placeholder="e.g. Continuous portfolio management, quarterly reviews, tax-loss harvesting, and unlimited advisor access."></textarea>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Disclosures -->
+      <fieldset>
+        <legend>Firm Disclosures</legend>
+        <p class="field-note">Edit this text as needed. It will appear on the final page.</p>
+        <textarea id="disclosures" rows="12">This proposal is provided for informational purposes only and does not constitute investment advice, a solicitation, or an offer to buy or sell any securities. All recommendations are subject to change without notice.
+
+Past performance is not indicative of future results. Investing involves risk, including the potential loss of principal. There is no guarantee that any financial plan or investment strategy will be successful.
+
+[Firm Name] is a registered investment adviser. Registration does not imply a certain level of skill or training. A copy of our current Form ADV Part 2A (Firm Brochure) is available upon request or at www.adviserinfo.sec.gov.
+
+The financial planning services described herein are offered as described in our Form ADV Part 2A. Fees are described in detail in this proposal and in our Form ADV Part 2A brochure.
+
+Insurance products and services are offered through appropriately licensed individuals. [Firm Name] does not provide legal or tax advice. Clients should consult with their own legal and tax professionals regarding their specific situation.</textarea>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="button" class="btn-generate" onclick="generateProposal()">Generate Proposal</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ============ PROPOSAL PREVIEW ============ -->
+  <div id="proposal-preview" class="proposal-preview" style="display:none;">
+    <div class="preview-toolbar">
+      <button onclick="downloadPDF()">Save as PDF</button>
+      <button onclick="backToEditor()">Back to Editor</button>
+    </div>
+
+    <div id="proposal-content" class="proposal-content">
+      <!-- Pages are injected here by JS -->
+    </div>
+  </div>
+
+  <script src="proposal-app.js"></script>
+</body>
+</html>

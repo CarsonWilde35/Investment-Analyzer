@@ -129,12 +129,13 @@ const CATEGORIES = [
 
 // ---- Timeline data ----
 const TIMELINE = [
-  { week: 'Week 1', label: 'Discovery & Data Gathering', desc: 'Initial consultation to understand your goals, values, and concerns. We collect financial documents, account statements, and key information needed to build your plan.' },
-  { week: 'Week 2', label: 'Analysis & Diagnostics', desc: 'Deep analysis of your current financial position across all planning categories. We identify gaps, opportunities, and areas requiring immediate attention.' },
-  { week: 'Week 3', label: 'Strategy Development', desc: 'Build customized strategies for each planning area. Model scenarios, project outcomes, and develop actionable recommendations tailored to your specific situation.' },
-  { week: 'Week 4', label: 'Plan Construction', desc: 'Compile all strategies into a comprehensive, written financial plan document with clear action items, timelines, and accountability milestones.' },
-  { week: 'Week 5', label: 'Plan Presentation & Review', desc: 'Present the completed plan in a dedicated review meeting. Walk through every recommendation, answer questions, and refine priorities together.' },
-  { week: 'Week 6', label: 'Implementation & Activation', desc: 'Begin executing the plan. Open or reallocate accounts, initiate insurance applications, coordinate with other professionals, and establish your ongoing review cadence.' }
+  { week: 'Week 1', label: 'Engagement & Onboarding', desc: 'Sign agreement, collect fee, send intake questionnaire, send document checklist, send RightCapital invite, and schedule the key meetings.', highlight: false },
+  { week: 'Week 2', label: 'Data Gathering & Review', desc: 'Client uploads statements, pay stubs, retirement information, debt details, savings, benefits, and insurance. Review everything and identify missing items.', highlight: false },
+  { week: 'Week 3', label: 'Discovery Meeting', desc: '45-60 minute meeting to confirm goals, home purchase timeline, retirement questions, cash reserves, current savings, and the biggest mistakes to avoid.', highlight: false },
+  { week: 'Week 4', label: 'Analysis & Strategy', desc: 'Run planning scenarios, evaluate rollover and withdrawal decisions, review home readiness, stress-test priorities, and determine the recommendation sequence.', highlight: false },
+  { week: 'Week 5', label: 'Build the Blueprint', desc: 'Turn the strategy into a client-ready deliverable: summary visuals, key findings, action steps, and a clear structure for the presentation meeting.', highlight: false },
+  { week: 'Week 6', label: 'Blueprint Presentation', desc: 'Present the recommendations, explain tradeoffs, review the action plan, and deliver the written Blueprint summary and next-step checklist.', highlight: false },
+  { week: '30 Days Later', label: 'Follow-Up Meeting', desc: '30-45 minute implementation check-in to review progress, answer questions, revisit pending items, and decide whether ongoing support is needed.', highlight: true }
 ];
 
 // ---- State ----
@@ -412,7 +413,7 @@ function generateProposal() {
     tocNum++;
   });
   tocItems += `
-    <li class="toc-item"><span class="toc-number">${tocNum++}</span><span class="toc-label">Your 6-Week Timeline</span><span class="toc-dots"></span></li>
+    <li class="toc-item"><span class="toc-number">${tocNum++}</span><span class="toc-label">Financial Blueprint Timeline</span><span class="toc-dots"></span></li>
     <li class="toc-item"><span class="toc-number">${tocNum++}</span><span class="toc-label">Why Now</span><span class="toc-dots"></span></li>
     <li class="toc-item"><span class="toc-number">${tocNum++}</span><span class="toc-label">Pricing &amp; Investment</span><span class="toc-dots"></span></li>
     <li class="toc-item"><span class="toc-number">${tocNum++}</span><span class="toc-label">Firm Disclosures</span><span class="toc-dots"></span></li>
@@ -451,20 +452,30 @@ function generateProposal() {
   });
 
   // ---- Timeline ----
-  const timelineHTML = TIMELINE.map((t, i) => `
-    <div class="timeline-item">
-      <div class="timeline-dot">${i + 1}</div>
-      <div class="timeline-week">${t.week}</div>
-      <div class="timeline-label">${t.label}</div>
-      <div class="timeline-desc">${t.desc}</div>
-    </div>
+  const timelineRows = TIMELINE.map(t => `
+    <tr class="${t.highlight ? 'timeline-row-highlight' : ''}">
+      <td class="timeline-cell-week">${escapeHTML(t.week)}</td>
+      <td class="timeline-cell-label">${escapeHTML(t.label)}</td>
+      <td class="timeline-cell-desc">${escapeHTML(t.desc)}</td>
+    </tr>
   `).join('');
 
   pages.push(innerPage(d, pageNum++, `
     <div class="pg-eyebrow">The Process</div>
-    <div class="pg-title">Your 6-Week Timeline</div>
-    <div class="pg-subtitle">A structured, efficient process \u2014 from our first conversation to an actionable plan you can begin implementing immediately.</div>
-    <div class="timeline">${timelineHTML}</div>
+    <div class="pg-title">Financial Blueprint Timeline</div>
+    <div class="pg-subtitle">One-time planning engagement structured over 6 weeks, followed by a 30-day implementation check-in. Designed to give enough time for thoughtful analysis without letting the process drag.</div>
+
+    <div class="timeline-callout">
+      <strong>Included in the process:</strong> agreement + onboarding, discovery, analysis and strategy, blueprint presentation, written action plan, and a 30-day follow-up meeting.
+    </div>
+
+    <table class="timeline-table">
+      <tbody>${timelineRows}</tbody>
+    </table>
+
+    <div class="timeline-note">
+      <strong>Positioning note:</strong> The 6-week window is the planning phase. Account transfers or rollovers may continue after the Blueprint is delivered depending on paperwork, provider timelines, and client responsiveness.
+    </div>
   `));
 
   // ---- Why Now ----

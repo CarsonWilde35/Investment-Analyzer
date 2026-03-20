@@ -669,60 +669,82 @@ h1 {
   font-size: 1rem;
 }
 
-/* ---- TIMELINE ---- */
-.timeline {
-  position: relative;
-  padding-left: 40px;
-  margin-top: 12px;
+/* ---- TIMELINE (table layout) ---- */
+.timeline-callout {
+  background: var(--off-white);
+  border-left: 4px solid var(--navy);
+  padding: 18px 24px;
+  margin-bottom: 28px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--slate);
+  border-radius: 0 6px 6px 0;
 }
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 15px;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, var(--navy), var(--gold));
-  border-radius: 2px;
-}
-.timeline-item {
-  position: relative;
-  padding: 0 0 28px 28px;
-}
-.timeline-item:last-child { padding-bottom: 0; }
-.timeline-dot {
-  position: absolute;
-  left: -32px;
-  top: 2px;
-  width: 28px; height: 28px;
-  background: var(--navy);
-  border: 3px solid var(--gold);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: var(--gold);
-}
-.timeline-week {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--gold);
-  margin-bottom: 2px;
-}
-.timeline-label {
-  font-size: 1.02rem;
-  font-weight: 600;
+.timeline-callout strong {
   color: var(--navy);
-  margin-bottom: 4px;
 }
-.timeline-desc {
+
+.timeline-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 0.88rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.timeline-table tr {
+  border-bottom: 1px solid #e4e7ec;
+}
+.timeline-table tr:last-child {
+  border-bottom: none;
+}
+.timeline-cell-week {
+  width: 120px;
+  padding: 18px 20px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--navy);
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
+}
+.timeline-row-highlight .timeline-cell-week {
+  background: #6b7f5e;
+}
+.timeline-cell-label {
+  width: 180px;
+  padding: 18px 20px;
+  font-weight: 700;
+  color: var(--navy);
+  vertical-align: middle;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+.timeline-cell-desc {
+  padding: 18px 20px;
+  color: var(--slate);
+  line-height: 1.55;
+  vertical-align: middle;
+}
+.timeline-table tr:nth-child(even) .timeline-cell-label,
+.timeline-table tr:nth-child(even) .timeline-cell-desc {
+  background: var(--off-white);
+}
+
+.timeline-note {
+  background: var(--off-white);
+  border: 1px solid #e4e7ec;
+  border-radius: 6px;
+  padding: 18px 24px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--slate);
+  margin-top: 4px;
+}
+.timeline-note strong {
+  color: var(--navy);
 }
 
 /* ---- WHY NOW ---- */
